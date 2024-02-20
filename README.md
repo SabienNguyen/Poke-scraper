@@ -1,5 +1,5 @@
 ## Web Scraper
-> Currently, basic web scraper in golang that prints the url link from provided website
+> Currently, basic web scraper in golang that prints the url link from provided website. Provided below is an example output if google.com is the provided link.
 `https://www.google.com/imghp?hl=en&tab=wi
 https://maps.google.com/maps?hl=en&tab=wl
 https://play.google.com/?hl=en&tab=w8
