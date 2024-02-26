@@ -1,5 +1,5 @@
 ## Web Scraper
-Currently, scrapes products, in this case pokemon, and scrapes the name, price, image, and url of product. 
+Webscraper to collect pokemon information off the pokemondb.net pokedex
 ## installation
 ```
 go 1.20
