@@ -9,12 +9,20 @@ import (
 	"github.com/gocolly/colly"
 )
 
-type PokemonProduct struct {
-	url, image, name, price string
+func contains(s []string, str string) bool {
+	for _, v := range s {
+		if v == str {
+			return true
+		}
+	}
+	return false
 }
 
 func main() {
-	var pokemonProducts []PokemonProduct
+
+	pageToScrape := "https://pokemondb.net/pokedex/all"
+	pokemonData := [][]string{{"id", "Name", "Type", "Total", "HP", "Attack", "Defense", "Sp.Atk", "Sp.Def", "Speed"}}
+
 	c := colly.NewCollector()
 
 	c.OnRequest(func(r *colly.Request) {
@@ -33,53 +41,39 @@ func main() {
 		fmt.Printf("%v\n", e.Attr("href"))
 	})
 
-	c.OnHTML("li.product", func(e *colly.HTMLElement) {
-		//extract all li elements of product class
-		pokemonProduct := PokemonProduct{}
-
-		pokemonProduct.url = e.ChildAttr("a", "href")
-		pokemonProduct.image = e.ChildAttr("img", "src")
-		pokemonProduct.name = e.ChildText("h2")
-		pokemonProduct.price = e.ChildText(".price")
-
-		pokemonProducts = append(pokemonProducts, pokemonProduct)
+	c.OnHTML(".data-table", func(e *colly.HTMLElement) {
+		// For each row in the table, extract Pokemon data
+		e.ForEach("tbody tr", func(_ int, el *colly.HTMLElement) {
+			var pokemonInfo []string
+			el.ForEach("td", func(index int, elem *colly.HTMLElement) {
+				pokemonInfo = append(pokemonInfo, elem.Text)
+			})
+			pokemonData = append(pokemonData, pokemonInfo)
+		})
 	})
 
 	c.OnScraped(func(r *colly.Response) {
 		fmt.Println(r.Request.URL, " scraped!")
 	})
 
-	c.Visit("https://scrapeme.live/shop/")
+	c.Visit(pageToScrape)
 
-	file, err := os.Create("products.csv")
-
+	file, err := os.Create("Pokemon.csv")
 	if err != nil {
-		log.Fatalln("Failed to create output CSV file", err)
+		log.Fatalf("Failed creating file: %s", err)
 	}
 	defer file.Close()
 
 	writer := csv.NewWriter(file)
-
-	headers := []string{
-		"url",
-		"image",
-		"name",
-		"price",
-	}
-
-	writer.Write(headers)
-
-	for _, pokemonProduct := range pokemonProducts {
-		record := []string{
-			pokemonProduct.url,
-			pokemonProduct.image,
-			pokemonProduct.name,
-			pokemonProduct.price,
-		}
-
-		writer.Write(record)
-	}
-
 	defer writer.Flush()
+
+	for _, value := range pokemonData {
+		err := writer.Write(value)
+		if err != nil {
+			log.Fatalf("Error writing record to file: %s", err)
+		}
+	}
+
+	fmt.Println("CSV file saved successfully.")
 
 }
