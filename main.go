@@ -2,39 +2,29 @@ package main
 
 import (
 	"encoding/csv"
+	"flag"
 	"fmt"
 	"log"
 	"os"
+	"strings"
 
 	"github.com/gocolly/colly"
 )
 
-func contains(s []string, str string) bool {
-	for _, v := range s {
-		if v == str {
-			return true
-		}
-	}
-	return false
-}
-
 func main() {
+	var pokemonType1 string
+	var pokemonType2 string
+	flag.StringVar(&pokemonType1, "type1", "", "Type of Pokemon to scrape")
+	flag.StringVar(&pokemonType2, "type2", "", "Type of Pokemon to scrape")
+	flag.Parse()
+	pageToScrape := "https://pokemondb.net/pokedex/all/"
 
-	pageToScrape := "https://pokemondb.net/pokedex/all"
 	pokemonData := [][]string{{"id", "Name", "Type", "Total", "HP", "Attack", "Defense", "Sp.Atk", "Sp.Def", "Speed"}}
 
 	c := colly.NewCollector()
 
-	c.OnRequest(func(r *colly.Request) {
-		fmt.Println("Visiting: ", r.URL)
-	})
-
 	c.OnError(func(_ *colly.Response, err error) {
 		log.Println("Something went wrong: ", err)
-	})
-
-	c.OnResponse(func(r *colly.Response) {
-		fmt.Println("Page visited: ", r.Request.URL)
 	})
 
 	c.OnHTML("a", func(e *colly.HTMLElement) {
@@ -48,7 +38,9 @@ func main() {
 			el.ForEach("td", func(index int, elem *colly.HTMLElement) {
 				pokemonInfo = append(pokemonInfo, elem.Text)
 			})
-			pokemonData = append(pokemonData, pokemonInfo)
+			if strings.Contains(strings.ToLower(pokemonInfo[2]), strings.ToLower(pokemonType1)) && strings.Contains(strings.ToLower(pokemonInfo[2]), pokemonType2) {
+				pokemonData = append(pokemonData, pokemonInfo)
+			}
 		})
 	})
 
