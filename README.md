@@ -12,3 +12,9 @@ require (
 go build main.go
 go run main.go
 ```
+
+## using flags
+
+```
+go run main.go -type1=xxxx -type2=xxxx //default is ""
+```
