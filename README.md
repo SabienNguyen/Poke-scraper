@@ -1,5 +1,6 @@
-## Web Scraper
-Webscraper to collect pokemon information off the pokemondb.net pokedex
+## Poke-scraper
+Poke-scraper is a tool that allows users to collect data on pokemon from the pokemondb database! 
+
 ## installation
 ```
 go 1.20
