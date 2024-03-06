@@ -1,5 +1,5 @@
 ## Poke-scraper
-Poke-scraper is a tool that allows users to collect data on pokemon from the pokemondb database! 
+Poke-scraper is a tool that allows users to collect data on pokemon from the pokemondb database! Can be useful for anyone searching for an easy way to view stats of pokemon filtered by pokemon type. Can be great for putting together your pokemon team or collecting data for analytics.
 ## What it does
 Scans the pokemondb database webpage to collect the pokemon id, name and stats and collects it all into a csv format. This tool also allows for filtering based off of pokemon type. 
 ## How it works
